@@ -115,7 +115,7 @@ create_list <- function(listName = "vgs_list", spFilterType = "OT", description 
   list_data$X2<- gsub("  "," ",list_data$X2)
   
   ## adjusting Filter and species GUIDs depending on type of list
-  if (spFilter == "OT") { ## Other List
+  if (spFilter == "OT" || input$named_num == TRUE) { ## Other List for species
     list <- "OT"
     pre_guid <- "OT"
   }
@@ -123,6 +123,7 @@ create_list <- function(listName = "vgs_list", spFilterType = "OT", description 
     list <- "GC"
     pre_guid <- "G"
   }
+  
   # end of formatting ----
   
   ## Inserting species ----
@@ -135,6 +136,25 @@ create_list <- function(listName = "vgs_list", spFilterType = "OT", description 
   
   i <- 1
   while (i < nrow(list_data) + 1) {
+    
+    ## Common Name nchar max check (80 char)
+    if (nchar(list_data[i, ][[1]]) > 80) {
+      shinyalert(title = "Error",
+                 text = paste0("CommonName '",list_data[i, ][[1]],"' has too many characters (max 80)"),
+                 type = "error", confirmButtonText = "Try Again Later..."
+                 )
+      stop(paste0("CommonName '",list_data[i, ][[1]],"' has too many characters (max 80)"))
+    }
+    
+    ## Species Name nchar check (150 char)
+    if (nchar(list_data[i, ][[2]]) > 150) {
+      shinyalert(title = "Error",
+                 text = paste0("SpeciesName '",list_data[i, ][[2]],"' has too many characters (max 150)"),
+                 type = "error", confirmButtonText = "Try Again Later..."
+      )
+      stop(paste0("SpeciesName '",list_data[i, ][[2]],"' has too many characters (max 150)"))
+    }
+    
     query_db <- paste0("Select PK_Species, CommonName, SpeciesName from Species
 inner join SpListLink on SpListLink.FK_Species = Species.PK_Species
 inner join SpList on SpList.PK_SpList = SpListLink.FK_SpList
