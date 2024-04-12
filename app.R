@@ -82,7 +82,8 @@ server <- function(input, session, output) {
       
       ## only need to update survey if H list
       if (input$list_type == 1) {
-        shinyalert("Connect your list to a survey as an 'exclusive list'...", text = "then export it before you move on to 'Update Survey'",
+        shinyalert("Connect your list to a survey as an 'Exclusive List'",
+                   text = "then export it, then click 'Update Survey' to locate it again",
                    confirmButtonText = "Got it!", type = "info",size = "l",
                    animation = "slide-from-bottom", confirmButtonCol = "#00FF00")
       
