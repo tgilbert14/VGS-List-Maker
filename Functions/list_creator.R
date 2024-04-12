@@ -66,6 +66,15 @@ create_list <- function(listName = "vgs_list", spFilterType = "OT", description 
     FK_SubType <- "X'ef7c1c387c858346bacc4457813c6ec7'"
     spFilter <- "GC"
   }
+  ## override previous values if named num list
+  if (input$named_num == TRUE) {
+    FK_SubType <- "X'a444fb804d72d1429ac8e378d9d4e27d'"
+    spFilter <- ""
+    ## not sure how this works yet w/ named numeric
+    definition <- "'<DocumentElement />'"
+  }
+  
+  
   insert_list <- paste0(
     "INSERT INTO SpList(
     PK_SpList,FK_SubType,ListName,Description,SpFilter,Definition,Locked,Active,
@@ -385,17 +394,17 @@ where ListName = '", listName, "'")
   }
   ## end of H list ----
   
-  ## if Named Numeric
-  if (input$named_num == TRUE) {
-    
-    ## update species is list to be named-numeric
-    update_sp <- paste0("Update spList
-      Set FK_SubType = x'a444fb804d72d1429ac8e378d9d4e27d'
-      Where PK_SpList = ",Pk_SpList)
-    
-    ## insert species into species table
-    dbExecute(mydb, update_sp)
-  }
+  # ## if Named Numeric
+  # if (input$named_num == TRUE) {
+  #   
+  #   ## update species is list to be named-numeric
+  #   update_sp <- paste0("Update spList
+  #     Set FK_SubType = x'a444fb804d72d1429ac8e378d9d4e27d'
+  #     Where PK_SpList = ",Pk_SpList)
+  #   
+  #   ## insert species into species table
+  #   dbExecute(mydb, update_sp)
+  # }
   
 }
 ## End of List creation --------------------------------------------------------
