@@ -49,7 +49,7 @@ server <- function(input, session, output) {
   ## initial NULL value to stop spinner at start
   output$status <- renderText(NULL)
   
-  ## alert so know how to order list
+  ## alert so know how to order listi
   shinyalert(
     "VGS List Sorter",
     html = TRUE,
@@ -88,7 +88,7 @@ server <- function(input, session, output) {
                ui = shiny::actionButton(inputId = "create_2", label = "Update Survey"))
       removeUI(selector = "#create")
       #shinyalert(title = "DONE!!!", type = "info")
-      print("Ordering Complete")
+      print("List Created - Ordering Complete for all lists in VGS")
     })
 
   })
