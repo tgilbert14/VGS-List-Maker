@@ -10,7 +10,7 @@ library(tidyverse)
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # Define UI for application that draws a histogram
-ui <- fluidPage(theme = shinytheme("darkly"),collapsable = TRUE,
+ui <- fluidPage(theme = shinytheme("united"),collapsable = TRUE,
 
                 # Application title
                 titlePanel(" VGS List Maker"),
@@ -26,6 +26,7 @@ ui <- fluidPage(theme = shinytheme("darkly"),collapsable = TRUE,
                     checkboxInput(inputId = "named_num",
                                   label = "Named-Numeric List?",
                                   value = F),
+
                     #shiny::fileInput(inputId = "data_file", label = "Choose a list to create", accept = ".csv", multiple = F, placeholder = "vgs_list.csv"),
                     shiny::textInput(inputId = "list_name", label = "List Name", placeholder = "list name", value = NULL),
                     shiny::selectInput(inputId = "list_type", label = "List Type", choices = c("Normal list"=0, "Hierarchical list"=1), multiple = F, selected = F),
@@ -49,17 +50,18 @@ server <- function(input, session, output) {
   ## initial NULL value to stop spinner at start
   output$status <- renderText(NULL)
   
-  ## alert so know how to order listi
+  ## alert so know how to order list
   shinyalert(
     "VGS List Sorter",
     html = TRUE,
     text = tagList(selectInput(inputId = "order_by",
-                               label = "How would you like to order species by?",
+                               label = "Sort species by?",
                                choices = c("SpeciesName","CommonName"), selected = F)),
-    showConfirmButton = T, confirmButtonCol = "#00FF00", confirmButtonText = "next", size = "l"
+    showConfirmButton = T, confirmButtonCol = "#00FF00", confirmButtonText = "next", size = "m"
   )
   
   observeEvent(input$create, {
+    
     req(input$list_name)
     req(input$order_by)
     
@@ -78,15 +80,23 @@ server <- function(input, session, output) {
       ## order all lists in VGS
       source("Functions/ordering_list_queries_abc.R", local = T)
       
-      shinyalert("Connect your list to a survey as an 'exclusive list'...", text = "then export it before you move on to 'Update Survey'",
-                 confirmButtonText = "Got it!", type = "info",size = "l",
-                 animation = "slide-from-bottom", confirmButtonCol = "#00FF00")
+      ## only need to update survey if H list
+      if (input$list_type == 1) {
+        shinyalert("Connect your list to a survey as an 'exclusive list'...", text = "then export it before you move on to 'Update Survey'",
+                   confirmButtonText = "Got it!", type = "info",size = "l",
+                   animation = "slide-from-bottom", confirmButtonCol = "#00FF00")
       
-     
-      insertUI(selector = "#create",
-               where = "afterEnd",
-               ui = shiny::actionButton(inputId = "create_2", label = "Update Survey"))
-      removeUI(selector = "#create")
+        insertUI(selector = "#create",
+                 where = "afterEnd",
+                 ui = shiny::actionButton(inputId = "create_2", label = "Update Survey"))
+        removeUI(selector = "#create")
+      } else { ## this button does nothing and is a filler
+        insertUI(selector = "#create",
+                 where = "afterEnd",
+                 ui = shiny::actionButton(inputId = "create_3", label = "All Done!"))
+        removeUI(selector = "#create")
+      }
+      
       #shinyalert(title = "DONE!!!", type = "info")
       print("List Created - Ordering Complete for all lists in VGS")
     })
